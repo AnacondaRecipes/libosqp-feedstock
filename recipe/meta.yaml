@@ -1,5 +1,4 @@
 {% set version = "0.6.3" %}
-{% set qdldlversion = "0.1.5" %}
 
 package:
   name: libosqp
@@ -27,7 +26,9 @@ requirements:
     - cmake
     - ninja
   host:
-    - libqdldl ={{ qdldlversion }}
+    - libqdldl 0.1.7
+  run:
+    - libqdldl >=0.1.7,<0.1.8.0a0
 
 test:
   commands:
@@ -41,12 +42,18 @@ test:
     - if exist %PREFIX%\\Library\\lib\\cmake\\osqp\\osqp-config.cmake (exit 0) else (exit 1)  # [win]
 
 about:
-  home: https://github.com/osqp/osqp
+  home: https://osqp.org/
   license: Apache-2.0
+  license_family: Apache
   summary: The Operator Splitting QP Solver.
+  description: |
+    OSQP is a software package for solving convex quadratic programming (QP) problems. 
+    It stands for "Operator Splitting Quadratic Program solver." OSQP is designed to 
+    efficiently solve large-scale QP problems with sparsity structure.
   license_file:
     - LICENSE
-    - lin_sys/direct/qdldl/amd/LICENSE
+  dev_url: https://github.com/osqp/osqp
+  doc_url: https://osqp.org/docs/get_started/
 
 extra:
   recipe-maintainers:
