@@ -1,9 +1,7 @@
 #!/bin/sh
 set -ex
 
-mkdir build && cd build
-
-cmake -G Ninja \
+cmake -G Ninja -B build -S . \
     ${CMAKE_ARGS} \
     -DCMAKE_INSTALL_PREFIX=$PREFIX \
     -DCMAKE_PREFIX_PATH=$PREFIX \
@@ -12,7 +10,8 @@ cmake -G Ninja \
     -DENABLE_MKL_PARDISO=OFF \
     -DOSQP_RESPECT_BUILD_SHARED_LIBS:BOOL=ON \
     -DBUILD_SHARED_LIBS=ON \
-    ..
+    -DOSQP_BUILD_UNITTESTS=ON
 
-cmake --build .
-cmake --install .
+cmake --build build -j
+cmake --build build --target test
+cmake --install build
