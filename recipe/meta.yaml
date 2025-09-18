@@ -1,17 +1,13 @@
-{% set version = "0.6.3" %}
+{% set name = "osqp" %}
+{% set version = "1.0.0" %}
 
 package:
-  name: libosqp
+  name: lib{{ name }}
   version: {{ version }}
 
 source:
-  url: https://github.com/osqp/osqp/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: a6b4148019001f87489c27232e2bdbac37c94f38fa37c1b4ee11eaa5654756d2
-  patches:
-    # see https://github.com/osqp/osqp/pull/310, can be dropped for osqp v1.0
-    - patches/0001-Add-OSQP_RESPECT_BUILD_SHARED_LIBS-option.patch
-    # use libqdldl from conda-forge, build interface in osqp directly
-    - patches/0002-build-qdldl-interface-as-part-of-osqp.patch
+  url: https://github.com/{{ name }}/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: dd6a1c2e7e921485697d5e7cdeeb043c712526c395b3700601f51d472a7d8e48
 
 build:
   number: 0
@@ -21,39 +17,40 @@ build:
 
 requirements:
   build:
+    - {{ stdlib('c') }}
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - msys2-git  # [win]
     - cmake
-    - ninja
-  host:
-    - libqdldl 0.1.7
-  run:
-    - libqdldl >=0.1.7,<0.1.8.0a0
+    - ninja-base
+    # Needed to build UTs
+    - python
+    - numpy
+    - scipy
 
 test:
   commands:
     - test -f ${PREFIX}/include/osqp/osqp.h  # [not win]
-    - test -f ${PREFIX}/lib/libosqp.so  # [linux]
-    - test -f ${PREFIX}/lib/libosqp.dylib  # [osx]
+    - test -f ${PREFIX}/lib/libosqp${SHLIB_EXT}  # [not win]
+    - test ! -f ${PREFIX}/lib/libosqp.a  # [not win]
     - test -f ${PREFIX}/lib/cmake/osqp/osqp-config.cmake  # [not win]
-    - if exist %PREFIX%\\Library\\include\\osqp\\osqp.h (exit 0) else (exit 1)  # [win]
-    - if exist $PREFIX$\\Library\\lib\\osqp.lib (exit 0) else (exit 1)  # [win]
-    - if exist $PREFIX$\\Library\\bin\\osqp.dll (exit 0) else (exit 1)  # [win]
-    - if exist %PREFIX%\\Library\\lib\\cmake\\osqp\\osqp-config.cmake (exit 0) else (exit 1)  # [win]
+    - if not exist %PREFIX%\\Library\\include\\osqp\\osqp.h exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\bin\\osqp.dll exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\lib\\osqp.lib exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\lib\\cmake\\osqp\\osqp-config.cmake exit 1  # [win]
 
 about:
-  home: https://osqp.org/
+  home: https://osqp.org
   license: Apache-2.0
+  license_file: LICENSE
   license_family: Apache
   summary: The Operator Splitting QP Solver.
   description: |
     OSQP is a software package for solving convex quadratic programming (QP) problems. 
     It stands for "Operator Splitting Quadratic Program solver." OSQP is designed to 
     efficiently solve large-scale QP problems with sparsity structure.
-  license_file:
-    - LICENSE
   dev_url: https://github.com/osqp/osqp
-  doc_url: https://osqp.org/docs/get_started/
+  doc_url: https://osqp.org/docs/get_started
 
 extra:
   recipe-maintainers:
