@@ -10,7 +10,7 @@ source:
   sha256: dd6a1c2e7e921485697d5e7cdeeb043c712526c395b3700601f51d472a7d8e48
 
 build:
-  number: 0
+  number: 1
   run_exports:
     # No ABI policy is documented, let's be conservative
     - {{ pin_subpackage('libosqp', max_pin='x.x.x') }}
@@ -32,7 +32,7 @@ test:
   commands:
     - test -f ${PREFIX}/include/osqp/osqp.h  # [not win]
     - test -f ${PREFIX}/lib/libosqp${SHLIB_EXT}  # [not win]
-    - test ! -f ${PREFIX}/lib/libosqp.a  # [not win]
+    - test ! -f ${PREFIX}/lib/libosqpstatic.a  # [not win]
     - test -f ${PREFIX}/lib/cmake/osqp/osqp-config.cmake  # [not win]
     - if not exist %PREFIX%\\Library\\include\\osqp\\osqp.h exit 1  # [win]
     - if not exist %PREFIX%\\Library\\bin\\osqp.dll exit 1  # [win]
